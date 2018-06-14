@@ -1,0 +1,210 @@
+﻿@using PYS_Entidad;
+@{
+    List<E_TA_TIPO_EVAL> list = (List<E_TA_TIPO_EVAL>)ViewBag.List_Tipo_Evaluacion;
+    Layout = null;
+}
+<!-- Vista Tipo Evaluación -->
+<script>
+    function Nuevo() {
+        $.ajax({
+            type: "post", url: "@Url.Action("NewTipoEvaluacion", "TipoEvaluacion")",
+            success: function (res) {
+                $("#ViewModal").empty();
+                $("#ViewModal").html(res);
+                $("#btnViewModal").click();
+            },
+            error: function (res) {
+                alertify.error("<strong>Error de conexión.</strong>");
+            }
+        });
+    };
+    function Editar(varCodTip) {
+        var prm = {
+            FS_TIP_EVAL: varCodTip
+        };
+        $.ajax({
+            type: "post", data: prm, url: "@Url.Action("EditTipoEvaluacion", "TipoEvaluacion")",
+            success: function (res) {
+                $("#ViewModal").empty();
+                $("#ViewModal").html(res);
+                $("#btnViewModal").click();
+            },
+            error: function (res) {
+                alertify.error("<strong>Error de conexión.</strong>");
+            }
+        });
+    };
+
+    function Eliminar(tipo) {
+        alertify.confirm('¿Está seguro de eliminar el registro?', function (e) {
+            if (e) {
+                var prm = {
+                    FS_TIP_EVAL: tipo
+                };
+                $.ajax({
+                    type: "post", url: "@Url.Action("DeleteTipoEvaluacion", "TipoEvaluacion")",
+                    data: prm,
+                    success: function (res) {
+                        alertify.success("<strong>Eliminado correctamente.</strong>");
+                        $("#btnTipoEvaluacion").click();
+                        $(".modal-backdrop").removeClass();
+                    },
+                    error: function (res) {
+                        alertify.error("<strong>No se puede eliminar.</strong>");
+                    }
+                });
+            } else {
+                return false;
+            };
+        });
+    };
+
+    function Cancelar() {
+        $("#btnTipoEvaluacion").click();
+    };
+
+    function Imprimir() {
+
+    };
+
+</script>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3>Tipos de evaluación</h3>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <div class="table table-responsive">
+
+                        <div class="clearfix form-group btn-yellow pull-left btn-nuevo-group">
+                            <div class="btn-group">
+                                <button id="btnNuevo" class="btn btn-default pull-left" onclick="Nuevo();">
+                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Nuevo
+                                </button>
+                            </div>
+                        </div>
+
+                        <table id="tblTipoEvaluacion" class="table table-striped table-bordered table-hover table-condensed" cellspacing="0" width="100%">
+                            <thead class="bg-primary">
+                                <tr>
+                                    <th style="width:8%">Acciones</th>
+                                    <th style="width:7%">Código</th>
+                                    <th style="width:85%">Descripción</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    if (list.Count >= 0 && list != null)
+                                    {
+                                        foreach (E_TA_TIPO_EVAL item in list)
+                                        {
+                                            <tr>
+                                                <td class="controls text-center text-middle" style="padding:2px !important">
+                                                    <span class="control-table">
+                                                        <i data-toggle="tooltip" title="" data-original-title="Cancelar" id="btnCancelar" 
+                                                           class="glyphicon glyphicon-remove" style="display: none" onclick="Cancelar();" />
+                                                    </span>
+                                                    <span class="control-table">
+                                                        <i data-toggle="tooltip" title="" data-original-title="Editar" id="Idpencil" 
+                                                           class="glyphicon glyphicon-pencil btn btn-transparent btn-editar "
+                                                           onclick="Editar('@item.FS_TIP_EVAL');"></i>
+                                                    </span>
+                                                    <span class="control-table">
+                                                        <i data-toggle="tooltip" title="" data-original-title="Eliminar" 
+                                                           class="glyphicon glyphicon-floppy-remove btn btn-transparent btn-eliminar"
+                                                           onclick="Eliminar('@item.FS_TIP_EVAL');"></i>
+                                                    </span>
+                                                </td>
+                                                <td class="col-cod-tip-eval">@item.FS_TIP_EVAL</td>
+                                                <td class="text-left">@item.FS_DES_TIPO_EVAL</td>
+                                            </tr>
+                                        }
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bs-example-modal-lg" id="ViewModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+</div>
+<div class="col-sm-2 a-left no-padd">
+    <button data-toggle="modal" data-target="#ViewModal" id="btnViewModal" onclick="" hidden="hidden">Mostrar</button>
+</div>
+
+<script>
+    $(function () {
+        $("tr th").addClass("text-center");
+        $('#tblTipoEvaluacion').DataTable({
+            responsive: true,
+            dom: 'lBfrtip',
+            stateSave: true,
+   
+            buttons: [
+                {
+                    extend: 'collection',
+                    text: 'Exportar',
+                    buttons: [
+                        'copy',
+                        'excel',
+                        'csv',
+                        'pdf',
+                        'print'
+                    ]
+                }
+            ],
+            "lengthMenu": [[5, 10, -1], [5, 10, "Todos"]],
+            "language": {
+                "sProcessing": "Procesando...",
+                "sLengthMenu": "Mostrar _MENU_ registros",
+                "sZeroRecords": "No se encontraron resultados",
+                "sEmptyTable": "Ningún dato disponible en esta tabla",
+                "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix": "",
+                "sSearch": "Buscar:",
+                "sUrl": "",
+                "sInfoThousands": ",",
+                "sLoadingRecords": "Cargando...",
+                "oPaginate": {
+                    "sFirst": "Primero",
+                    "sLast": "Último",
+                    "sNext": "Siguiente",
+                    "sPrevious": "Anterior"
+                }
+            },
+            "fnStateSave": function (oSettings, oData) {
+                // Send an Ajax request to the server with the state object
+                $.ajax({
+                    "url": "/state_save",
+                    "data": oData,
+                    "dataType": "json",
+                    "method": "POST",
+                    "success": function () { }
+                });
+            },
+            "fnStateLoad": function (oSettings) {
+                // Send an Ajax request to the server to get the data. Note that
+                // this is a synchronous request.
+                $.ajax({
+                    "url": "/state_load",
+                    "dataType": "json",
+                    "success": function (json) {
+                        callback(json);
+                    }
+                });
+
+
+            }
+        });
+    });
+</script>

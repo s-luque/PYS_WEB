@@ -1,0 +1,178 @@
+﻿@using PYS_Entidad;
+@{
+    List<E_TA_PERF_USUA> V_LI_TA_PERF_USUA = (List<E_TA_PERF_USUA>)ViewBag.V_VB_LIST_TA_PERF_USUA;
+    List<E_TA_TIPO_DOCU_SIST> V_LI_TA_TIPO_DOCU_SIST = (List<E_TA_TIPO_DOCU_SIST>)ViewBag.V_VB_LIST_TA_TIPO_DOCU_SIST;
+    List<E_TA_TIPO_EVAL> V_LI_TA_TIPO_EVAL = (List<E_TA_TIPO_EVAL>)ViewBag.V_VB_LIST_TA_TIPO_EVAL;
+    List<E_TA_CATE_CARG> V_LI_TA_CATE_CARG = (List<E_TA_CATE_CARG>)ViewBag.V_VB_LIST_TA_CATE_CARG;
+    List<E_TA_TIPO_MEDI_COMU> V_LI_TA_TIPO_MEDI_COMU = (List<E_TA_TIPO_MEDI_COMU>)ViewBag.V_VB_LIST_TA_TIPO_MEDI_COMU;
+    Layout = null;
+}
+<!-- TABLAS DE AYUDA -->
+<script>
+    $("button[data-dismiss-modal=modal2]").click(function () {
+        $('#ViewModal2').modal('hide');
+    });
+
+    $(function () {
+
+        selectDescripciones('tbody>tr.row-docu-apro', "#TXT_FS_COD_TIDO_SIST", "#TXT_FS_DES_TIDO_SIST");
+        selectDescripciones('tbody>tr.row-cate-carg', "#TXT_FS_COD_CCAR", "#TXT_FS_DES_CCAR");
+        selectDescripciones('tbody>tr.row-tipo-eval', "#TXT_FS_TIP_EVAL", "#TXT_FS_DES_TIPO_EVAL");
+        selectDescripciones('tbody>tr.row-tipo-meco', "#TXT_FS_TIP_MECO", "#TXT_FS_DES_TIPO_MECO");
+        selectDescripciones('tbody>tr.row-docu-apro', "#TXT_FS_COD_TIDO_SIST", "#TXT_FS_DES_TIDO_SIST");
+        selectDescripciones('tbody>tr.row-docu-apro', "#TXT_FS_COD_TIDO_SIST", "#TXT_FS_DES_TIDO_SIST");
+
+        function selectDescripciones(fila,col0,col1) {
+            $('#tblAyuda').find(fila).on('dblclick', function () {
+                $(col0).val($(this).children("td:eq(0)").html());   //Obtiene el valor la columna código. Index de columnas inicia desde cero
+                $(col1).val($(this).children("td:eq(1)").html());
+                $(col0).focus();
+                //Cerrar el modal
+                $(".closeAyuda").click();
+            });
+        }
+    });
+
+</script>
+
+<div class="panel panel-default modal-dialog" style="width:50%">
+    <div class="panel-heading">
+        <button type="button" class="closeAyuda" data-dismiss-modal="modal2" aria-hidden="true" id="btnCerrarTabla" style="float:right">&times;</button>
+        <h3> @ViewBag.title</h3>
+    </div>
+    <div class="panel-body">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <div class="table table-responsive">
+
+                    <table id="tblAyuda" class="table table-striped table-bordered table-hover  text-center text-middle " cellspacing="0" width="100%">
+                        <thead class="bg-primary">
+                            <tr>
+                                <th style="text-align:center; width:8% !important">Código</th>
+                                <th style="text-align:center">Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody style="cursor:pointer">
+
+                            @if (ViewBag.buscar_TA_PERF_USUA != null)
+                            {
+                                if (V_LI_TA_PERF_USUA.Count >= 0 && V_LI_TA_PERF_USUA != null)
+                                {
+                                    foreach (E_TA_PERF_USUA item in V_LI_TA_PERF_USUA)
+                                    {
+                                        <tr>
+                                            <td style="text-align:left;width:8%">@item.FS_COD_PFUS</td>
+                                            <td style="text-align:left">@item.FS_DES_PFUS</td>
+                                        </tr>
+                                    }
+                                }
+                                else { }
+                            }
+                            else if (ViewBag.buscar_TA_TIPO_DOCU_SIST != null)
+                            {
+                                if (V_LI_TA_TIPO_DOCU_SIST.Count >= 0 && V_LI_TA_TIPO_DOCU_SIST != null)
+                                {
+                                    foreach (E_TA_TIPO_DOCU_SIST item in V_LI_TA_TIPO_DOCU_SIST)
+                                    {
+                                        <tr class="row-docu-apro">
+                                            <td style="text-align:left;width:8%">@item.FS_COD_TIDO_SIST</td>
+                                            <td style="text-align:left">@item.FS_DES_TIDO_SIST</td>
+                                        </tr>
+                                    }
+                                }
+                                else { }
+                            }
+                            else if (ViewBag.buscar_TA_TIPO_EVAL != null)
+                            {
+                                if (V_LI_TA_TIPO_EVAL.Count >= 0 && V_LI_TA_TIPO_EVAL != null)
+                                {
+                                    foreach (E_TA_TIPO_EVAL item in V_LI_TA_TIPO_EVAL)
+                                    {
+                                        <tr class="row-tipo-eval">
+                                            <td style="text-align:left;width:8%">@item.FS_TIP_EVAL</td>
+                                            <td style="text-align:left">@item.FS_DES_TIPO_EVAL</td>
+                                        </tr>
+                                    }
+                                }
+                                else { }
+                            }
+                            else if (ViewBag.buscar_TA_CATE_CARG != null)
+                            {
+                                if (V_LI_TA_CATE_CARG.Count >= 0 && V_LI_TA_CATE_CARG != null)
+                                {
+                                    foreach (E_TA_CATE_CARG item in V_LI_TA_CATE_CARG)
+                                    {
+                                        <tr class="row-cate-carg">
+                                            <td style="text-align:left;width:8%">@item.FS_COD_CCAR</td>
+                                            <td style="text-align:left">@item.FS_DES_CCAR</td>
+                                        </tr>
+                                    }
+                                }
+                                else { }
+                            }
+                            else if (ViewBag.buscar_TA_TIPO_MEDI_COMU != null)
+                            {
+                                if (V_LI_TA_TIPO_MEDI_COMU.Count >= 0 && V_LI_TA_TIPO_MEDI_COMU != null)
+                                {
+                                    foreach (E_TA_TIPO_MEDI_COMU item in V_LI_TA_TIPO_MEDI_COMU)
+                                    {
+                                        <tr class="row-tipo-meco">
+                                            <td style="text-align:left;width:8%">@item.FS_TIP_MECO</td>
+                                            <td style="text-align:left">@item.FS_DES_TIPO_MECO</td>
+                                        </tr>
+                                    }
+                                }
+                                else { }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    $(function () {
+        $('#tblAyuda').DataTable({
+            responsive: true,
+            dom: 'lBfrtip',
+            buttons: [
+                {
+                    extend: 'collection',
+                    text: 'Exportar',
+                    buttons: [
+                        'copy',
+                        'excel',
+                        'csv',
+                        'pdf',
+                        'print'
+                    ]
+                }
+            ],
+            "lengthMenu": [[5, 10, -1], [5, 10, "Todos"]],
+            "language": {
+                "sProcessing": "Procesando...",
+                "sLengthMenu": "Mostrar _MENU_ registros",
+                "sZeroRecords": "No se encontraron resultados",
+                "sEmptyTable": "Ningún dato disponible en esta tabla",
+                "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix": "",
+                "sSearch": "Buscar:",
+                "sUrl": "",
+                "sInfoThousands": ",",
+                "sLoadingRecords": "Cargando...",
+                "oPaginate": {
+                    "sFirst": "Primero",
+                    "sLast": "Último",
+                    "sNext": "Siguiente",
+                    "sPrevious": "Anterior"
+                }
+            }
+        });
+    });
+</script>

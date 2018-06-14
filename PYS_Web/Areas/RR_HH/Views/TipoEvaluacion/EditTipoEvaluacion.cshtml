@@ -1,0 +1,74 @@
+﻿@using PYS_Entidad;
+@{
+    E_TA_TIPO_EVAL obj = (E_TA_TIPO_EVAL)ViewBag.getTipoEvaluacion;
+    Layout = null;
+}
+
+<form id="Frm_Tipo_Evaluacion">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" id="btnCerrarTipoEdit">&times;</button>
+                <h2>Editar registro</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+
+                            @Html.Label("Código", new { @class = "control-label" })
+                            @Html.TextBoxFor(x => @obj.FS_TIP_EVAL, new { @class = "form-control", @id = "TXT_FS_TIP_EVAL", @disabled = "disabled" })
+                            
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+
+                            @Html.Label("Descripción", new { @class = "control-label" })
+                            @Html.TextBoxFor(x => @obj.FS_DES_TIPO_EVAL, new { @class = "form-control", @id = "TXT_FS_DES_TIPO_EVAL" })
+                            @Html.ValidationMessageFor(x => @obj.FS_DES_TIPO_EVAL, null, new { @class = "label label-alert help-block" })
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="modal-footer a-center">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default" id="btnGrabar" onclick="Actualizar('@obj.FS_TIP_EVAL');">
+                                    <span class="glyphicon glyphicon-pencil glyphicon-editar"></span>
+                                </button>
+                                <button type="button" class="btn btn-default" id="btnCancelar" data-dismiss="modal">
+                                    <span class="glyphicon glyphicon-remove glyphicon-cancelar"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@Scripts.Render("~/bundles/jsValidacion")
+<script>
+
+    function Actualizar(varCodTipo) {
+        var form = $("#Frm_Tipo_Evaluacion");
+        if (form.validate() && form.valid()) {
+            var prm = {
+                FS_TIP_EVAL: varCodTipo,
+                FS_DES_TIPO_EVAL: $('#TXT_FS_DES_TIPO_EVAL').val()
+            };
+            $.ajax({
+                type: "post", url: "@Url.Action("Actualizar", "TipoEvaluacion")", data: prm,
+                success: function (res) {
+                    alertify.success("<strong>Actualizado correctamente.</strong>");
+                    Cancelar();
+                    $("#btnCerrarTipoEdit").click();
+                    $(".modal-backdrop").removeClass();
+                },
+                error: function (res) {
+                    alertify.error("<strong>No se puede actualizar.</strong>");
+                }
+            });
+        };
+    };
+</script>
+

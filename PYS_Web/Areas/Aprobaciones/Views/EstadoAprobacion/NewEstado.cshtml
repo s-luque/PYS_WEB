@@ -1,0 +1,129 @@
+﻿@model PYS_Entidad.E_TA_ESTA_APRO
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("Guardar", "EstadoAprobacion", FormMethod.Post, new { id = "Frm_Estado_Aprobacion" }))
+{
+    <div class="modal-dialog" style="border-radius:10px;">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" id="btnCerrarEstado">&times;</button>
+                <h2>Nuevo Registro</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Label("Codigo de Aprobación", new { @class = "control-label" })
+                            @Html.TextBoxFor(x => x.FS_COD_ESTA, new { @class = "form-control validaCodigo_3", @id = "TXT_FS_COD_ESTA" })
+                            @Html.ValidationMessageFor(x => x.FS_COD_ESTA, null, new { @class = "label label-alert help-bock" })
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            @Html.Label("Descripción de Aprobación", new { @class = "control-label" })
+                            @Html.TextBoxFor(x => x.FS_DES_ESTA, new { @class = "form-control", @id = "TXT_FS_DES_ESTA" })
+                            @Html.ValidationMessageFor(x => x.FS_DES_ESTA, null, new { @class = "label label-alert help-bock" })
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        @Html.Label("Estado de Aprobación")
+                        <div class="form-group">
+                            <!-- Radio button. -->
+                            <div class="btn-group" data-toggle="radio-buttons" style="padding-bottom:10px">
+                                <label class="btn btn-default">
+                                    @Html.RadioButtonFor(model => model.FS_IND_ESTA, "I", new { name = "radioEstado" }) Inicial
+                                </label>
+                                <label class="btn btn-default">
+                                    @Html.RadioButtonFor(model => model.FS_IND_ESTA, "P", new { name = "radioEstado" }) Proceso
+                                </label>
+                                <label class="btn btn-default">
+                                    @Html.RadioButtonFor(model => model.FS_IND_ESTA, "A", new { name = "radioEstado" }) Aprobado
+                                </label>
+                                <label class="btn btn-default">
+                                    @Html.RadioButtonFor(model => model.FS_IND_ESTA, "D", new { name = "radioEstado", Checked = "checked" }) Desaprobado
+                                </label>
+                            </div>
+                            @Html.ValidationMessageFor(x => x.FS_IND_ESTA, null, new { @class = "label label-alert help-bock" })
+
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="modal-footer a-center">
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-default">
+                                <span class="glyphicon glyphicon-floppy-disk glyphicon-guardar"></span></button>
+                                <button type="button" class="btn btn-default" id="btnCancelar" data-dismiss="modal">
+                                <span class="glyphicon glyphicon-remove glyphicon-cancelar"></span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+@Scripts.Render("~/bundles/jsValidacion")
+    <script>
+        function validar_existencia_FS_COD_ESTA() {
+            $.ajax({
+                type: 'GET',
+                url: "@Url.Action("Index", "EstadoAprobacion")",
+                success: function (data) {
+                    var valCampo = $('#TXT_FS_COD_ESTA').val();
+                    // Busca coincidencia
+                    var busColumna = $(data).find('#tblEstado td.col-cod-esta:contains("' + valCampo + '")');
+                    if (busColumna.html() == valCampo) {
+                        alertify.confirm('Código ya existe en tabla, ¿desea actualizarlo?', function (e) {
+                            if (e) {
+                                $('#ViewModal').modal('toggle');
+                                $('#ViewModal').one('hidden.bs.modal', function (e) {
+                                    Editar(valCampo);
+                                })
+                            }
+                            else {
+                                return false;
+                            }
+                        });
+                    }                     
+                },
+            error: function (res) {
+                alertify.error("<strong>Error de conexión.</strong>");
+            }
+        });        
+
+        }
+        $(function () {
+            $('#Frm_Estado_Aprobacion').submit(function () {
+                var form = $(this);
+                validar_existencia_FS_COD_ESTA();
+                if (form.validate() && form.valid()) {
+                    form.ajaxSubmit({
+                        dataType: 'JSON',
+                        type: 'POST',
+                        url: form.attr('action'),
+                        success: function (res) {
+                            if (res.response) {
+                                alertify.success("<strong>Registrado correctamente.</strong>");
+                                Cancelar();
+                                $("#btnCerrarEstado").click();
+                                $(".modal-backdrop").removeClass();
+                            }
+                            else {
+                                return false;
+                            }
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            alertify.error("<strong>" + errorThrown + "</strong>");
+                        }
+                    });
+                }
+                return false;
+            });
+        })
+    </script>
+
+}
+

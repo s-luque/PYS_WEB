@@ -1,0 +1,282 @@
+﻿
+@model PYS_Entidad.E_TA_MEDI_COMU
+@{
+    Layout = null;
+}
+
+<script>
+    function frm_buscar_TIP_MECO() {
+        $.ajax({
+            type: "post", url: "@Url.Action("Ayuda_Tipo_Medio", "AyudaBusqueda", new { Area = "Aprobaciones" })",
+            success: function (res) {
+                $("#ViewModal2").html(res);
+                $("#btnViewModal2").click();
+            },
+            error: function (res) {
+                alertify.error("<strong>Error de conexión.</strong>");
+            }
+        });
+    };
+</script>
+
+@using (Html.BeginForm("Guardar", "MedioComunicacion", FormMethod.Post, new { id = "Frm_Medio_Comunicacion" }))
+{
+    <div class="modal-dialog" style="border-radius:10px">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" id="btnCerrarMedioComu">&times;</button>
+                <h3>Nuevo registro</h3>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            @Html.Label("Código", new { @class = "control-label" })                            
+                            @Html.TextBoxFor(x => x.FS_COD_MECO, new { @class = "form-control input-sm validaCodigo_4", @id = "TXT_FS_COD_MECO" })                            
+                            @Html.ValidationMessageFor(x => x.FS_COD_MECO, null, new { @class = "label label-alert help-block" })
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="form-group">
+                            <label for="TXT_FS_NOM_MECO"  style="visibility:hidden">space</label>
+                            @Html.TextBoxFor(x => x.FS_NOM_MECO, new { @class = "form-control input-sm", @id = "TXT_FS_NOM_MECO" })
+                            @Html.ValidationMessageFor(x => x.FS_NOM_MECO, null, new { @class = "label label-alert help-block" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.Label("Nombre", new { @class = "control-label" })
+                            @Html.TextBoxFor(x => x.FS_NOM_CONT, new { @class = "form-control input-sm", @id = "TXT_FS_NOM_CONT" })
+                            @Html.ValidationMessageFor(x => x.FS_NOM_CONT, null, new { @class = "label label-alert help-block" })
+
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.Label("Dirección", new { @class = "control-label" })
+                            @Html.TextBoxFor(x => x.FS_DES_DIRE_MECO, new { @class = "form-control input-sm", @id = "TXT_FS_DES_DIRE_MECO" })
+                            @Html.ValidationMessageFor(x => x.FS_DES_DIRE_MECO, null, new { @class = "label label-alert help-block" })
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                @Html.Label("Tipo", new { @class = "control-label" })
+                                <div class="input-group">
+                                    @Html.TextBoxFor(x => x.FS_TIP_MECO, new { @class = "form-control  input-sm search-query  validaCodigo_4", @id = "TXT_FS_TIP_MECO" })
+                                    <span class="input-group-btn">
+                                        <button id="btnBuscarTIP_MECO" class="btn btn-transparent btn-sm cancel btn-buscar" data-toggle="tooltip" title="Buscar" 
+                                                type="button" onclick="frm_buscar_TIP_MECO();" disableValidation="true">
+                                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                                        </button>
+                                    </span>
+                                </div>
+                                @Html.ValidationMessageFor(x => x.FS_TIP_MECO, null, new { @class = "label label-alert help-block" })
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label for="space" style="visibility:hidden">space</label>
+                                <input class="form-control input-sm" id="TXT_FS_DES_TIPO_MECO" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                @Html.Label("", String.Format("Ubic. Geog."), new { @class = "control-label" })
+                                @Html.TextBoxFor(x => x.FS_COD_UBIC_GEOG, new { @class = "form-control  input-sm search-query  validaNumeros_6", @id = "TXT_FS_COD_UBIC_GEOG" })
+                                @Html.ValidationMessageFor(x => x.FS_COD_UBIC_GEOG, null, new { @class = "label label-alert help-block" })
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label for="space" style="visibility:hidden">space</label>
+                                <input class="form-control input-sm" id="TXT_FS_DES_UBIC_GEOG" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                @Html.Label("País", new { @class = "control-label" })
+                                @Html.TextBoxFor(x => x.FS_COD_PAIS, new { @class = "form-control  input-sm search-query  validaNumeros_3", @id = "TXT_FS_COD_PAIS" })
+                                @Html.ValidationMessageFor(x => x.FS_COD_PAIS, null, new { @class = "label label-alert help-block" })
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label for="space" style="visibility:hidden">space</label>
+                                <input class="form-control input-sm" id="TXT_FS_DES_PAIS" readonly>
+                            </div>
+                        </div>
+                    </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                @Html.Label("N° RUC", new { @class = "control-label" })
+                                @Html.TextBoxFor(x => x.FS_NUM_RUCS, new { @class = "form-control  input-sm  validaNumeros_11", @id = "TXT_FS_NUM_RUCS" })
+                                @Html.ValidationMessageFor(x => x.FS_NUM_RUCS, null, new { @class = "label label-alert help-block"})
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                @Html.Label("", String.Format("Tel. 1"), new { @class = "control-label" })
+                                @Html.TextBoxFor(x => x.FS_NUM_TEL1, new { @class = "form-control  input-sm", @id = "TXT_FS_NUM_TEL1" })
+                                @Html.ValidationMessageFor(x => x.FS_NUM_TEL1, null, new { @class = "label label-alert help-block" })
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                @Html.Label("", String.Format("Tel. 2"), new { @class = "control-label" })
+                                @Html.TextBoxFor(x => x.FS_NUM_TEL2, new { @class = "form-control  input-sm", @id = "TXT_FS_NUM_TEL2" })
+                                @Html.ValidationMessageFor(x => x.FS_NUM_TEL2, null, new { @class = "label label-alert help-block" })
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                @Html.Label("Fax", new { @class = "control-label" })
+                                @Html.TextBoxFor(x => x.FS_NUM_FAXS, new { @class = "form-control input-sm", @id = "TXT_FS_NUM_FAXS" })
+                                @Html.ValidationMessageFor(x => x.FS_NUM_FAXS, null, new { @class = "label label-alert help-block" })
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                @Html.Label("E-mail", new { @class = "control-label" })
+                                @Html.TextBoxFor(x => x.FS_NOM_MAIL, new { @class = "form-control  input-sm", @id = "TXT_FS_NOM_MAIL" })
+                                @Html.ValidationMessageFor(x => x.FS_NOM_MAIL, null, new { @class = "label label-alert help-block" })
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                @Html.Label("Web", new { @class = "control-label" })
+                                @Html.TextBoxFor(x => x.FS_DIR_WEBB, new { @class = "form-control  input-sm", @id = "TXT_FS_DIR_WEBB" })
+                                @Html.ValidationMessageFor(x => x.FS_DIR_WEBB, null, new { @class = "label label-alert help-block" })
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="modal-footer a-center">
+                                <div class="btn-group">
+                                    <button id="btnGuardar" type="submit" class="btn btn-default">
+                                    <span class="glyphicon glyphicon-floppy-disk glyphicon-guardar"></span></button>
+                                    <button class="btn btn-default cancel" id="btnCancelar" data-dismiss="modal">
+                                    <span class="glyphicon glyphicon-remove glyphicon-cancelar"></span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="ViewModal2" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <!--- Body del modal de tabla aquí-->
+    </div>
+    <div class="col-md-2 a-left no-padd">
+        <button data-toggle="modal" data-target="#ViewModal2" id="btnViewModal2" onclick="" hidden="hidden" type="button">Mostrar</button>
+    </div>
+
+@Scripts.Render("~/bundles/jsValidacion")
+
+<script>
+    $(function () {
+         // Imprimir descripción de Código TIPO MEDIO
+     function select_FS_TIP_MECO() {
+         $.ajax({
+             type: 'GET',
+             url: "@Url.Action("Ayuda_Tipo_Medio", "AyudaBusqueda", new { Area = "Aprobaciones" })",
+             success: function (data) {
+                 var codCampo = "#TXT_FS_TIP_MECO";
+                 var desCampo = "#TXT_FS_DES_TIPO_MECO";
+                 var nomForm = "#Frm_Medio_Comunicacion";
+
+                 var valCampo = $(codCampo).val();
+                 var busFila = $(data).find('tbody>tr.row-tipo-meco:contains("' + valCampo + '")');
+                 var colCero = $(busFila).children("td:eq(0)");
+                 var colUno = $(busFila).children("td:eq(1)");
+                 if ($.trim($(colUno).html()) == '' || ($.trim($(colCero).html()) != valCampo) ||  $.trim(valCampo) == '') {
+                     $(nomForm).validate().element(codCampo);
+                     $(desCampo).val("");
+                 }
+                 else {
+                     $(desCampo).val(colUno.html());
+                 }
+             },
+         error: function (res) {
+             alertify.error("<strong>Error de conexión.</strong>");
+         }
+     });
+     return false;
+     }
+         // Función - Recibe aviso de existencia de Código en tabla         
+         function validar_existencia_FS_COD_MECO() {
+             $.ajax({
+                 type: 'GET',
+                 url: "@Url.Action("Index", "MedioComunicacion")",
+                 success: function (data) {
+                     var valCampo = $('#TXT_FS_COD_MECO').val();
+                     // Busca coincidencia
+                     var busColumna = $(data).find('#tblMedioComunicacion > tbody > tr > td.col-cod-medi-comu:contains("' + valCampo + '")');
+                     if (busColumna.html() == valCampo) {
+                         alertify.confirm('Código ya existe en tabla, ¿desea actualizarlo?', function (e) {
+                             if (e) {
+                                 $('#ViewModal').modal('toggle');
+                                 $('#ViewModal').one('hidden.bs.modal', function (e) {
+                                     Editar(valCampo);
+                                 })
+                             }
+                             else {
+                                 return false;
+                             }
+                         });
+                     }                     
+                 },
+             error: function (res) {
+                 alertify.error("<strong>Error de conexión.</strong>");
+             }
+             });        
+         }
+
+         // Obtener la desc. correspondiente al Código Documento al presionar Enter
+         $('#TXT_FS_TIP_MECO').keydown(function (e) {
+             if (e.keyCode == 13) {
+                 select_FS_TIP_MECO();
+             }
+         });
+         $('#TXT_FS_COD_MECO').keydown(function (e) {
+             if (e.keyCode == 13) {
+                 validar_existencia_FS_COD_MECO();
+             }
+         });
+         // Submit de formulario
+     $('#Frm_Medio_Comunicacion').submit(function () {
+         var form = $(this);
+         validar_existencia_FS_COD_MECO();
+         // Verifica que se valide y sea válido
+         if (form.validate() && $(form).valid()) {
+             form.ajaxSubmit({
+                 dataType: 'JSON',
+                 type: 'POST',
+                 url: form.attr('action'),
+                 success: function (res) {
+                     if (res.response) {
+                         alertify.success("<strong>Registrado correctamente.</strong>");
+                         Cancelar();
+                         $("#btnCerrarMedioComu").click();
+                         $(".modal-backdrop").removeClass();
+                     }
+                     else {
+                         return false;
+                     }
+                 },
+                 error: function (jqXHR, textStatus, errorThrown) {
+                     alertify.error("<strong>" + errorThrown + "</strong>");
+                 }
+             });
+         }
+         return false;
+     });
+     })               
+                </script>
+}

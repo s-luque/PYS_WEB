@@ -1,0 +1,145 @@
+﻿@using PYS_Entidad;
+@{
+    E_TA_TIDO_APRO obj = (E_TA_TIDO_APRO)ViewBag.getDocumento;
+    Layout = null;
+}
+<form id="Frm_Documento_Aprobacion">
+    <div class="modal-dialog modal-editar">
+        <div class="modal-content">
+            <div class="modal-header text-center ">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" id="btnCerrarDocumentoEdit">&times;</button>
+                <h2>Editar Documento</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            @Html.Label("Código Documento", new { @class = "control-label" })
+                            <div class="input-group">
+                                @Html.TextBoxFor(x => @obj.FS_COD_TIDO_SIST,
+                               new {
+                                   @class = "form-control search-query busqCod validaCodigo_3",
+                                   @id = "TXT_FS_COD_TIDO_SIST",
+                                   @disabled = "disabled"
+                               })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="form-group">
+                            <label for="TXT_FS_DES_TIDO_SIST" class="control-label" style="visibility:hidden">space</label>
+                            <input class="form-control" id="TXT_FS_DES_TIDO_SIST" readonly>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            @Html.Label("Cantidad de niveles", new { @class = "control-label" })
+                            @Html.TextBoxFor(x => @obj.FI_CAN_NIVE, new { @class = "form-control validaNumeros_2", @id = "TXT_FI_CAN_NIVE" })
+                            @Html.ValidationMessageFor(x => @obj.FI_CAN_NIVE, null, new { @class = "label label-alert help-block" })
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <div class="btn-group" data-toggle="radio-buttons" id="rdobtnGroup1">
+                                <label class="btn btn-default">
+                                    @Html.RadioButtonFor(model => @obj.FS_IND_APRO_ENTI, "S", new { @class = "radioDocumento" }) Centro Costo
+                                </label>
+
+                                <label class="btn btn-default">
+                                    @Html.RadioButtonFor(model => @obj.FS_IND_APRO_ANEX, "S", new { @class = "radioDocumento" }) Anexo
+
+                                </label>
+                                <label class="btn btn-default">
+                                    @Html.RadioButtonFor(model => @obj, "", new { @class = "radioDocumento", @id = "btn3" }) Ninguno
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="modal-footer a-center">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default" id="btnGrabar" onclick="Actualizar('@obj.FS_COD_TIDO_SIST');">
+                                    <span class="glyphicon glyphicon-pencil glyphicon-editar"></span>
+                                </button>
+                                <button type="button" class="btn btn-default" id="btnCancelar" data-dismiss="modal">
+                                    <span class="glyphicon glyphicon-remove glyphicon-cancelar"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@Scripts.Render("~/bundles/jsValidacion")
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        select_FS_COD_TIDO_SIST();
+        $(".radioDocumento").each(function (index, item) {
+            $(item).click(function () {
+                //'uncheck other Radiobutton.
+                $('.radioDocumento').not(this).prop('checked', false);
+            });
+        });
+        if (!$("#obj_FS_IND_APRO_ENTI").is(":checked") && !$("#obj_FS_IND_APRO_ANEX").is(":checked")) {
+            $('#btn3').attr("checked", "checked");
+        }
+
+    })
+
+    function select_FS_COD_TIDO_SIST() {
+        $.ajax({
+            type: 'GET',
+            url: "@Url.Action("Ayuda_Documento", "AyudaBusqueda", new { Area = "Aprobaciones" })",
+            success: function (data) {
+                var codCampo = "#TXT_FS_COD_TIDO_SIST";
+                var desCampo = "#TXT_FS_DES_TIDO_SIST";
+                var nomForm = "#Frm_Documento_Aprobacion";
+
+                var valCampo = $(codCampo).val();
+                var busFila = $(data).find('tbody>tr.row-docu-apro:contains("' + valCampo + '")');
+                var colCero = $(busFila).children("td:eq(0)");
+                var colUno = $(busFila).children("td:eq(1)");
+                if ($.trim($(colUno).html()) == '' || ($.trim($(colCero).html()) != valCampo) ||  $.trim(valCampo) == '') {
+                    $(nomForm).validate().element(codCampo);
+                    $(desCampo).val("");
+                }
+                else {
+                    $(desCampo).val(colUno.html());
+                }
+            },
+        error: function (res) {
+            alertify.error("<strong>Error de conexión.</strong>");
+        }
+    });
+    return false;
+    }    
+    function Actualizar(varCodEsta) {
+        var form = $("#Frm_Documento_Aprobacion");
+        if (form.validate() && $(form).valid()) {
+            var prm = {
+                FS_COD_TIDO_SIST: varCodEsta,
+                FI_CAN_NIVE: $('#TXT_FI_CAN_NIVE').val(),
+                FS_IND_APRO_ENTI: $('[id=obj_FS_IND_APRO_ENTI]:checked').val(),
+                FS_IND_APRO_ANEX: $('[id=obj_FS_IND_APRO_ANEX]:checked').val()
+                //--------------------------------------'[name=SelectedOrderType]:checked'
+            };
+            $.ajax({
+                type: "post", url: "@Url.Action("Actualizar", "DocumentoAprobacion")", data: prm,
+                success: function (res) {
+                    alertify.success("<strong>Actualizado correctamente.</strong>");
+                    Cancelar();
+                    $("#btnCerrarDocumentoEdit").click();
+                    $(".modal-backdrop").removeClass();
+                },
+                error: function (res) {
+                    alertify.error("<strong>No se puede actualizar .</strong>");
+                }
+            });
+        };
+    };
+</script>
+

@@ -1,0 +1,201 @@
+﻿
+@model PYS_Entidad.E_TA_TIDO_APRO
+@{
+    Layout = null;
+}
+
+<script>
+    function frm_buscar_COD_TIDO_SIST() {
+        $.ajax({
+            type: "post", url: "@Url.Action("Ayuda_Documento", "AyudaBusqueda")",
+            success: function (res) {
+                $("#ViewModal2").html(res);
+                $("#btnViewModal2").click();
+            },
+            error: function (res) {
+                alertify.error("<strong>Error de conexión.</strong>");
+            }
+        });
+    };
+</script>
+
+@using (Html.BeginForm("Guardar", "DocumentoAprobacion", FormMethod.Post, new { id = "Frm_Documento_Aprobacion" }))
+{
+    <div class="modal-dialog" style="border-radius:10px;">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" id="btnCerrarDocumento">&times;</button>
+                <h3>Nuevo Registro</h3>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            @Html.Label("Código Documento", new { @class = "control-label" })
+                            <div class="input-group">
+                                @Html.TextBoxFor(x => x.FS_COD_TIDO_SIST, new { @class = "form-control search-query validaCodigo_3", @id = "TXT_FS_COD_TIDO_SIST" })
+                                <span class="input-group-btn">
+                                    <button id="btnBuscar" class="btn btn-default cancel btn-buscar" data-toggle="tooltip" title="Buscar" type="button" 
+                                            onclick="frm_buscar_COD_TIDO_SIST();" disableValidation="true">
+                                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                                    </button>
+                                </span>
+                            </div>
+                            @Html.ValidationMessageFor(x => x.FS_COD_TIDO_SIST, null, new { @class = "label label-alert help-block" })
+                        </div>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="form-group">
+                            <label for="TXT_FS_DES_TIDO_SIST" class = "control-label" style="visibility:hidden">space</label>
+                            <input class="form-control" id="TXT_FS_DES_TIDO_SIST" readonly>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            @Html.Label("Cantidad de niveles", new { @class = "control-label" })
+                            @Html.TextBoxFor(x => x.FI_CAN_NIVE, new { @class = "form-control txtCantidadNivel validaNumeros_2", @value = 0, @id = "TXT_FI_CAN_NIVE" })
+                            @Html.ValidationMessageFor(x => x.FI_CAN_NIVE, null, new { @class = "label label-alert help-block" })
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <div class="btn-group" data-toggle="radio-buttons" id="rdobtnGroup1">
+                                <label class="btn btn-default">
+                                    @Html.RadioButtonFor(model => model.FS_IND_APRO_ENTI, "S", new { @class = "radioDocumento" }) Centro Costo
+                                </label>
+
+                                <label class="btn btn-default">
+                                    @Html.RadioButtonFor(model => model.FS_IND_APRO_ANEX, "S", new { @class = "radioDocumento" }) Anexo
+
+                                </label>
+                                <label class="btn btn-default">
+                                    @Html.RadioButtonFor(model => model.FS_IND_APRO_ANEX, "N", new { @class = "radioDocumento", Checked = "checked" }) Ninguno
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                        <div class="col-sm-12">
+                            <div class="modal-footer a-center">
+                                <div class="btn-group">
+                                    <button id="btnGuardar" type="submit" class="btn btn-default">
+                                    <span class="glyphicon glyphicon-floppy-disk glyphicon-guardar"></span></button>
+                                    <button class="btn btn-default cancel"value="Cancel" id="btnCancelar" data-dismiss="modal">
+                                    <span class="glyphicon glyphicon-remove glyphicon-cancelar"></span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+        <div class="modal fade" id="ViewModal2" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+            <!--- Body del modal de tabla aquí-->
+        </div>
+        <div class="col-sm-2 a-left no-padd">
+            <button data-toggle="modal" data-target="#ViewModal2" id="btnViewModal2" onclick="" hidden="hidden" type="button">Mostrar</button>
+        </div>
+@Scripts.Render("~/bundles/jsValidacion")
+
+<script>
+        // Función - Recibe aviso de existencia de Código en tabla
+        function validar_existencia_FS_COD_TIDO_SIST() {
+              $.ajax({
+                 type: 'GET',
+                 url: "@Url.Action("Index", "DocumentoAprobacion")",
+                  success: function (data) {
+                      var valCampo = $('#TXT_FS_COD_TIDO_SIST').val();
+
+                      // Busca coincidencia
+                      var busColumna = $(data).find('#tblDocumento td.col-cod-tido-sist:contains("' + valCampo + '")');
+                     if (busColumna.html() == valCampo) {
+                         alertify.confirm('Código ya existe en tabla, ¿desea actualizarlo?', function (e) {
+                             if (e) {         
+                                 $('#ViewModal').modal('toggle');
+                                 $('#ViewModal').one('hidden.bs.modal', function (e) {
+                                     EditarDocu(valCampo);
+                                 })
+                             }
+                             else {
+                                 return false;
+                             }
+                         });
+                     }
+                 },
+                 error: function (res) {
+                     alertify.error("<strong>Error de conexión.</strong>");
+                 }
+             });
+
+        }
+
+        // Manejo de RadioButtonFor
+        $(".radioDocumento").each(function (index, item) {
+            $(item).click(function () {
+                $('.radioDocumento').not(this).prop('checked', false);
+            });
+        });
+      
+        function select_FS_COD_TIDO_SIST() {
+            $.ajax({
+                type: 'GET',
+                url: "@Url.Action("Ayuda_Documento", "AyudaBusqueda", new { Area = "Aprobaciones" })",
+                success: function (data) {
+                    var codCampo = "#TXT_FS_COD_TIDO_SIST";
+                    var desCampo = "#TXT_FS_DES_TIDO_SIST";
+                    var nomForm = "#Frm_Documento_Aprobacion";
+
+                    var valCampo = $(codCampo).val();
+                    var busFila = $(data).find('tbody>tr.row-docu-apro:contains("' + valCampo + '")');
+                    var colCero = $(busFila).children("td:eq(0)");
+                    var colUno = $(busFila).children("td:eq(1)");
+                    if ($.trim($(colUno).html()) == '' || ($.trim($(colCero).html()) != valCampo) ||  $.trim(valCampo) == '') {
+                        $(nomForm).validate().element(codCampo);
+                        $(desCampo).val("");
+                    }
+                    else {                       
+                        $(desCampo).val(colUno.html());
+                    }
+                },
+            error: function (res) {
+                alertify.error("<strong>Error de conexión.</strong>");
+            }
+        });
+        return false;
+        }         
+
+        // Obtener la desc. correspondiente al Código Documento al presionar Enter y verificar si ya existe en tabla
+    $('#TXT_FS_COD_TIDO_SIST').keydown(function (e) {
+            if (e.keyCode == 13) {
+                validar_existencia_FS_COD_TIDO_SIST();
+                select_FS_COD_TIDO_SIST();
+            }
+        });
+    // Submit de formulario
+        $('#Frm_Documento_Aprobacion').submit(function () {          
+            var form = $(this);
+            validar_existencia_FS_COD_TIDO_SIST();
+            if (form.validate() && $(form).valid()) {
+                form.ajaxSubmit({
+                    dataType: 'JSON',
+                    type: 'POST',
+                    url: form.attr('action'),
+                    success: function (res) {
+                        if (res.response) {
+                            alertify.success("<strong>Registrado correctamente.</strong>");
+                            Cancelar();
+                            $("#btnCerrarDocumento").click();
+                            $(".modal-backdrop").removeClass();
+                        }
+                        else {
+                            return false;
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alertify.error("<strong>" + errorThrown + "</strong>");
+                    }
+                });
+            }
+            return false;
+        });
+                </script>
+}

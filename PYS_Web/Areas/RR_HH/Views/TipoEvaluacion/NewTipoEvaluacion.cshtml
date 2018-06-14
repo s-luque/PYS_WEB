@@ -1,0 +1,113 @@
+﻿@model PYS_Entidad.E_TA_TIPO_EVAL
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("Guardar", "TipoEvaluacion", FormMethod.Post, new { id = "Frm_Tipo_Evaluacion" }))
+{
+    <div class="modal-dialog" style="border-radius:10px">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" id="btnCerrarTipo">&times;</button>
+                <h3>Nuevo registro</h3>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+
+                            @Html.Label("Código", new { @class = "control-label" })
+                            @Html.TextBoxFor(x => x.FS_TIP_EVAL, new { @class = "form-control validaCodigo_3", @id = "TXT_FS_TIP_EVAL" })
+                            @Html.ValidationMessageFor(x => x.FS_TIP_EVAL, null, new { @class = "label label-alert help-block"})
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+
+                            @Html.Label("Descripción", new { @class = "control-label" })
+                            @Html.TextBoxFor(x => x.FS_DES_TIPO_EVAL, new { @class = "form-control", @id = "TXT_FS_DES_TIPO_EVAL" })
+                            @Html.ValidationMessageFor(x => x.FS_DES_TIPO_EVAL, null, new { @class = "label label-alert help-block"})
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="modal-footer a-center">
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-default">
+                                <span class="glyphicon glyphicon-floppy-disk glyphicon-guardar"></span></button>
+                                <button type="button" class="btn btn-default" id="btnCancelar" data-dismiss="modal">
+                                <span class="glyphicon glyphicon-remove glyphicon-cancelar"></span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+@Scripts.Render("~/bundles/jsValidacion")
+    <script>
+   
+        // Función - Recibe aviso de existencia de Código en tabla         
+        function validar_existencia_FS_TIP_EVAL() {
+            $.ajax({
+                type: 'GET',
+                url: "@Url.Action("Index", "TipoEvaluacion")",
+                success: function (data) {
+                    var valCampo = $('#TXT_FS_TIP_EVAL').val();
+                    // Busca coincidencia
+                    var busColumna = $(data).find('#tblTipoEvaluacion td.col-cod-tip-eval:contains("' + valCampo + '")');
+                    if (busColumna.html() == valCampo) {
+                        alertify.confirm('Código ya existe en tabla, ¿desea actualizarlo?', function (e) {
+                            if (e) {
+                                $('#ViewModal').modal('toggle');
+                                $('#ViewModal').one('hidden.bs.modal', function (e) {
+                                    Editar(valCampo);
+                                })
+                            }
+                            else {
+                                return false;
+                            }
+                        });
+                    }                     
+                },
+            error: function (res) {
+                alertify.error("<strong>Error de conexión.</strong>");
+            }
+        });        
+        }
+        $(document).ready(function() {
+            $('#Frm_Tipo_Evaluacion').submit(function() {
+                var form = $(this);
+                validar_existencia_FS_TIP_EVAL();
+            if (form.validate() && form.valid())
+            {
+                form.ajaxSubmit({
+                    dataType: 'JSON',
+                        type: 'POST',
+                        url: form.attr('action'),
+                        success: function(res) {
+                        if (res.response)
+                        {
+                            alertify.success("<strong>Registrado correctamente.</strong>");
+                            Cancelar();
+                                $("#btnCerrarTipo").click();
+                                $(".modal-backdrop").removeClass();
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                        alertify.error("<strong>" + errorThrown + "</strong>");
+                    }
+                });
+            }
+            return false;
+        });
+    });
+    </script>
+
+}
+
+

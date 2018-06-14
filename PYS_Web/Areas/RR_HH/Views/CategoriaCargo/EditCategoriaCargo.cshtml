@@ -1,0 +1,72 @@
+﻿
+@using PYS_Entidad;
+@{
+    E_TA_CATE_CARG obj = (E_TA_CATE_CARG)ViewBag.getCategoriaCargo;
+    Layout = null;
+}
+<form id="Frm_Categoria_Cargo">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" id="btnCerrarCategoriaEdit">&times;</button>
+                <h2>Editar registro</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            @Html.Label("Codigo de Categoria", new { @class = "control-label" })
+                            @Html.TextBoxFor(x => @obj.FS_COD_CCAR, new { @class = "form-control validaCodigo_10", @id = "TXT_FS_COD_CCAR", @disabled = "disabled" })
+
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            @Html.Label("Descripción de Categoria", new { @class = "control-label" })
+                            @Html.TextBoxFor(x => @obj.FS_DES_CCAR, new { @class = "form-control", @id = "TXT_FS_DES_CCAR" })
+                            @Html.ValidationMessageFor(x => @obj.FS_DES_CCAR, null, new { @class = "label label-alert" })
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="modal-footer a-center">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default" id="btnGrabar" onclick="Actualizar('@obj.FS_COD_CCAR');">
+                                    <span class="glyphicon glyphicon-pencil glyphicon-editar"></span>
+                                </button>
+                                <button type="button" class="btn btn-default" id="btnCancelar" data-dismiss="modal">
+                                    <span class="glyphicon glyphicon-remove glyphicon-cancelar"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@Scripts.Render("~/bundles/jsValidacion")
+<script type="text/javascript">
+
+    function Actualizar(varCodCate) {
+        var form = $('#Frm_Categoria_Cargo')
+
+        if (form.validate() && form.valid()) {
+            var prm = {
+                FS_COD_CCAR: varCodCate,
+                FS_DES_CCAR: $('#TXT_FS_DES_CCAR').val()
+            };
+            $.ajax({
+                type: "post", url: "@Url.Action("Actualizar", "CategoriaCargo")", data: prm,
+                success: function (res) {
+                    alertify.success("<strong>Actualizado correctamente.</strong>");
+                    Cancelar();
+                    $("#btnCerrarCategoriaEdit").click();
+                    $(".modal-backdrop").removeClass();
+                },
+                error: function (res) {
+                    alertify.error("<strong>No se puede actualizar.</strong>");
+                }
+            });
+        };
+    };
+</script>

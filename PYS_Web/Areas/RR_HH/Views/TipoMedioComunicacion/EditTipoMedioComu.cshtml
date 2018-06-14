@@ -1,0 +1,74 @@
+﻿@using PYS_Entidad;
+@{
+    E_TA_TIPO_MEDI_COMU obj = (E_TA_TIPO_MEDI_COMU)ViewBag.getTipoMedioComunicacion;
+    Layout = null;
+}
+
+<form id="Frm_Tipo_Medio_Comunicacion">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" id="btnCerrarTipoEdit">&times;</button>
+                <h2>Editar registro</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Label("Código")
+                            @Html.TextBoxFor(x => @obj.FS_TIP_MECO, new { @class = "form-control validaCodigo_4", @id = "TXT_FS_TIP_MECO", @disabled = "disabled" })
+                            @Html.ValidationMessageFor(x => @obj.FS_TIP_MECO, null, new { @class = "label label-alert help-block" })
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <div class="form-group">
+
+                            @Html.Label("Descripción")
+                            @Html.TextBoxFor(x => @obj.FS_DES_TIPO_MECO, new { @class = "form-control", @id = "TXT_FS_DES_TIPO_MECO" })
+                            @Html.ValidationMessageFor(x => @obj.FS_DES_TIPO_MECO, null, new { @class = "label label-alert help-block" })
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="modal-footer a-center">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default" id="btnGrabar" onclick="Actualizar('@obj.FS_TIP_MECO');">
+                                    <span class="glyphicon glyphicon-pencil glyphicon-editar"></span>
+                                </button>
+                                <button type="button" class="btn btn-default" id="btnCancelar" data-dismiss="modal">
+                                    <span class="glyphicon glyphicon-remove glyphicon-cancelar"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+    @Scripts.Render("~/bundles/jsValidacion")
+    <script>
+        function Actualizar(varCodTipoMeco) {
+            var form = $("#Frm_Tipo_Medio_Comunicacion");
+            if (form.validate() && $(form).valid()) {
+                var prm = {
+                    FS_TIP_MECO: varCodTipoMeco,
+                    FS_DES_TIPO_MECO: $('#TXT_FS_DES_TIPO_MECO').val()
+                };
+                $.ajax({
+                    type: "post", url: "@Url.Action("Actualizar", "TipoMedioComunicacion")", data: prm,
+                    success: function (res) {
+                        alertify.success("<strong>Actualizado correctamente.</strong>");
+                        Cancelar();
+                        $("#btnCerrarTipoEdit").click();
+                        $(".modal-backdrop").removeClass();
+                    },
+                    error: function (res) {
+                        alertify.error("<strong>No se puede actualizar.</strong>");
+                    }
+                });
+            };
+        };
+    </script>
+

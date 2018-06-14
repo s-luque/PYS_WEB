@@ -1,0 +1,80 @@
+﻿@using PYS_Entidad;
+@{
+    E_TA_MEDI_CAPT obj = (E_TA_MEDI_CAPT)ViewBag.getMedio;
+    Layout = null;
+}
+
+<form id="Frm_Medio_Captacion">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" id="btnCerrarMedioEdit"></button>
+                <h2>Editar Registro</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="TXT_FS_COD_MEDI_CAPT">Código de Medio</label>
+                            @Html.TextBoxFor(x => @obj.FS_COD_MEDI_CAPT, new { @class = "form-control validaCodigo_4", @id = "TXT_FS_COD_MEDI_CAPT",
+                           @disabled = "disabled"})
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label for="TXT_FS_DES_MEDI_CAPT">Descripción de Medio</label>
+                            @Html.TextBoxFor(x => @obj.FS_DES_MEDI_CAPT, new { @class = "form-control", @id= "TXT_FS_DES_MEDI_CAPT" })                          
+                            @Html.ValidationMessageFor(x => @obj.FS_DES_MEDI_CAPT, null, new { @class = "label label-danger" })
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="modal-footer a-center">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default" id="btnGrabar" onclick="Actualizar('@obj.FS_COD_MEDI_CAPT');">
+                                <span class="glyphicon glyphicon-pencil" style="font-size:22px; color:#92c696;"></span></button>
+                                <button type="button" class="btn btn-default" id="btnCancelar" data-dismiss="modal">
+                                <span class="glyphicon glyphicon-remove" style="font-size:22px; color:#ff6a73;"></span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@Scripts.Render("~/bundles/jsValidacion")
+<script type="text/javascript">
+
+    function Actualizar(varCodMdcap) {
+        var form = $('#Frm_Medio_Captacion');
+
+        if (form.validate() && form.valid()) {
+            var prm = {
+                FS_COD_MEDI_CAPT: varCodMdcap,
+                FS_DES_MEDI_CAPT: $('#TXT_FS_DES_MEDI_CAPT').val()
+            };
+            form.ajaxSubmit({
+                dataType: 'JSON',
+                type: "post",
+                url: "@Url.Action("Actualizar", "MedioCaptacion")", data: prm,
+                success: function (res) {
+                    if (res.response) {
+                        alertify.success("<strong>Actualizado correctamente.</strong>");
+                        Cancelar();
+                        $("#btnCerrarMedioEdit").click();
+                        $(".modal-backdrop").removeClass();
+                    }
+                    else {
+                        return false;
+                    }
+                },
+                error: function (res) {
+                    alertify.error("<strong>No se puede actualizar.</strong>");
+                 
+                }
+            });
+        };
+    };
+ 
+</script>
+

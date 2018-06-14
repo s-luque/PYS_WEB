@@ -1,0 +1,223 @@
+﻿@using PYS_Entidad;
+@{
+    List<E_TA_TIDO_APRO> list = (List<E_TA_TIDO_APRO>)ViewBag.List_Documento;
+    Layout = null;
+}
+<!-- DOCUMENTO APROBACIÓN -->
+<script type="text/javascript">
+
+    function NuevoDocu() {
+        $('.iconcargar').show();
+        $.ajax({
+            type: "post", url: "@Url.Action("NewDocumento", "DocumentoAprobacion")",
+            //complete: function () { $('#iconcargar').hide(); },
+            success: function (res) {
+                $('.iconcargar').hide();
+                $("#ViewModal").empty();
+                $("#ViewModal").html(res);
+                $("#btnViewModal").click();
+            },
+            error: function (res) {
+                alertify.error("<strong>Error de conexión.</strong>");
+            }
+        });
+    };
+    function EditarDocu(varCodDocu) {
+        var prm = {
+            FS_COD_TIDO_SIST: varCodDocu
+        };
+
+        $.ajax({
+            type: "post", data: prm, url: "@Url.Action("EditDocumento", "DocumentoAprobacion")",
+            success: function (res) {
+                $("#ViewModal").empty();
+                $("#ViewModal").html(res);
+                $("#btnViewModal").click();
+            },
+            error: function (res) {
+                alertify.error("<strong>Error de conexión.</strong>");
+            }
+        });
+    };
+    function EliminarDocu(codigo) {
+        alertify.confirm('¿Está seguro de eliminar el registro?', function (e) {
+            if (e) {
+                var prm = {
+                    FS_COD_TIDO_SIST: codigo
+                };
+                $.ajax({
+                    type: "post", url: "@Url.Action("DeleteDocumento", "DocumentoAprobacion")",
+                    data: prm,
+                    success: function (res) {
+                        alertify.success("<strong>Eliminado correctamente.</strong>");
+                        $("#btnDocumentos").click();
+                        $(".modal-backdrop").removeClass();
+                    },
+                    error: function (res) {
+                        alertify.error("<strong>No se puede eliminar.</strong>");
+                    }
+                });
+            } else {
+                return false;
+            };
+        });
+    };
+
+    function Cancelar() {
+        $("#btnDocumentos").click();
+    };
+
+    function Imprimir() {
+
+    };
+
+</script>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3>Documentos aprobación</h3>
+    </div>
+    <div class="panel-body">
+        <div class="content-body">
+            @*<div class="clearfix form-group btn-yellow">
+
+                    <div class="btn-group">
+                        <a role="button" href="@Url.Action("ReportEstado")" data-ajax="true" id="btnPrint" class="btn btn-warning pull-right">
+                            <span class="glyphicon glyphicon-export" aria-hidden="true"></span> Exportar PDF
+                        </a>
+                    </div>
+                </div>*@
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <div class="table table-responsive">
+                            <div class="clearfix form-group btn-yellow pull-left btn-nuevo-group">
+                                <div class="btn-group">
+                                    <button id="btnNuevoDoc" class="btn btn-default pull-left" onclick="NuevoDocu();" data-navAjax="true" data-target="#ViewModalNuevo">
+                                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Nuevo
+                                    </button>
+                                </div>
+                            </div>
+                            <table id="tblDocumento" class="table table-striped table-bordered table-hover table-condensed " cellspacing="0" width="100%">
+                                <thead class="bg-primary">
+                                    <tr>
+                                        <th style="width:5%">Acciones</th>
+                                        <th style="width:8%">Código</th>
+                                        <th style="width:33%">Cantidad de niveles</th>
+                                        <th style="width:27%">Centro Costo</th>
+                                        <th style="width:27%">Anexo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        if (list.Count >= 0 && list != null)
+                                        {
+                                            foreach (E_TA_TIDO_APRO item in list)
+                                            {
+                                                <tr>
+                                                    <td class="controls  text-center text-middle col-acciones">
+                                                        <span class="control-table">
+                                                            <i data-toggle="tooltip" title="" data-original-title="Cancelar" id="btnCancelar" class="glyphicon glyphicon-remove" style="display: none" onclick="Cancelar();" />
+                                                        </span>
+                                                        <span class="control-table">
+                                                            <i data-toggle="tooltip" title="" data-original-title="Editar" id="Idpencil" 
+                                                               class="glyphicon glyphicon-pencil btn btn-transparent btn-editar" onclick="EditarDocu('@item.FS_COD_TIDO_SIST');"></i>
+                                                        </span>
+                                                        <span class="control-table">
+                                                            <i data-toggle="tooltip" title="" data-original-title="Eliminar" 
+                                                               class="glyphicon glyphicon-floppy-remove btn btn-transparent btn-eliminar"onclick="EliminarDocu('@item.FS_COD_TIDO_SIST');"></i>
+                                                        </span>
+                                                    </td>
+                                                    <td class="col-cod-tido-sist">@item.FS_COD_TIDO_SIST</td>
+                                                    <td >@item.FI_CAN_NIVE</td>
+                                                    <td >@item.FS_IND_APRO_ENTI</td>
+                                                    <td >@item.FS_IND_APRO_ANEX</td>
+                                                </tr>
+                                            }
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bs-example-modal-lg" id="ViewModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+</div>
+<div class="col-sm-2 a-left no-padd">
+    <button data-toggle="modal" data-target="#ViewModal" id="btnViewModal" onclick="" hidden="hidden">Mostrar</button>
+</div>
+
+
+<script type="text/javascript">
+    
+    $(function () {
+        $('#tblDocumento').DataTable({
+            retrieve: true,
+            "stateSave": true,
+            responsive: true,
+            dom: 'lBfrtip',
+            buttons: [
+                {
+                    extend: 'collection',
+                    text: 'Exportar',
+                    buttons: [
+                        'copy',
+                        'excel',
+                        'csv',
+                        'pdf',
+                        'print'
+                    ]
+                }
+            ],
+            "lengthMenu": [[5, 10, -1], [5, 10, "Todos"]],
+            "language": {
+                "sProcessing": "Procesando...",
+                "sLengthMenu": "Mostrar _MENU_ registros",
+                "sZeroRecords": "No se encontraron resultados",
+                "sEmptyTable": "Ningún dato disponible en esta tabla",
+                "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix": "",
+                "sSearch": "Buscar:",
+                "sUrl": "",
+                "sInfoThousands": ",",
+                "sLoadingRecords": "Cargando...",
+                "oPaginate": {
+                    "sFirst": "Primero",
+                    "sLast": "Último",
+                    "sNext": "Siguiente",
+                    "sPrevious": "Anterior"
+                }
+            },
+            "fnStateSave": function (oSettings, oData) {
+                // Send an Ajax request to the server with the state object
+                $.ajax({
+                    "url": "/state_save",
+                    "data": oData,
+                    "dataType": "json",
+                    "method": "POST",
+                    "success": function () { }
+                });
+            },
+            "fnStateLoad": function (oSettings) {
+                // Send an Ajax request to the server to get the data. Note that
+                // this is a synchronous request.
+                $.ajax({
+                    "url": "/state_load",
+                    "async": false,
+                    "dataType": "json",
+                    "success": function (json) {
+                        callback(json);
+                    }
+                });
+
+
+            }
+        });
+    });
+</script>

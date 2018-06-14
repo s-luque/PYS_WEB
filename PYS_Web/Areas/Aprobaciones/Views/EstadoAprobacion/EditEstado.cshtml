@@ -1,0 +1,92 @@
+﻿@using PYS_Entidad;
+@{
+    E_TA_ESTA_APRO obj = (E_TA_ESTA_APRO)ViewBag.getEstado;
+    Layout = null;
+}
+
+<form id="Frm_Estado_Aprobacion">
+    <div class="modal-dialog modal-editar">
+        <div class="modal-content">
+            <div class="modal-header text-center ">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" id="btnCerrarEstadoEdit">&times;</button>
+                <h2>Editar Aprobación</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            @Html.Label("Codigo", new { @class = "control-label" })
+                            @Html.TextBoxFor(x => @obj.FS_COD_ESTA, new { @class = "form-control validaCodigo_3", @id = "TXT_FS_COD_ESTA", @disabled = "disabled" })
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            @Html.Label("Descripción", new { @class = "control-label" })
+                            @Html.TextBoxFor(x => @obj.FS_DES_ESTA, new { @class = "form-control", @id = "TXT_FS_DES_ESTA" })
+                            @Html.ValidationMessageFor(x => @obj.FS_DES_ESTA, null, new { @class = "label label-alert help-bock" })
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        @Html.Label("Estado de Aprobación")
+                        <div class="form-group">
+                            <!-- Radio button. -->
+                            <div class="btn-group" data-toggle="radio-buttons" style="padding-bottom:10px">
+                                <label class="btn btn-default">
+                                    @Html.RadioButtonFor(x => @obj.FS_IND_ESTA, "I", new { name = "radioEstado" }) Inicial
+                                </label>
+                                <label class="btn btn-default">
+                                    @Html.RadioButtonFor(x => @obj.FS_IND_ESTA, "P", new { name = "radioEstado" }) Proceso
+                                </label>
+                                <label class="btn btn-default">
+                                    @Html.RadioButtonFor(x => @obj.FS_IND_ESTA, "A", new { name = "radioEstado" }) Aprobado
+                                </label>
+                                <label class="btn btn-default">
+                                    @Html.RadioButtonFor(x => @obj.FS_IND_ESTA, "D", new { name = "radioEstado"}) Desaprobado
+                                </label>
+                            </div>
+                            @Html.ValidationMessageFor(x => @obj.FS_IND_ESTA, null, new { @class = "label label-alert help-bock" })
+
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="modal-footer a-center">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default" id="btnGrabar" onclick="Actualizar('@obj.FS_COD_ESTA');">
+                                    <span class="glyphicon glyphicon-pencil glyphicon-editar"></span>
+                                </button>
+                                <button type="button" class="btn btn-default" id="btnCancelar" data-dismiss="modal">
+                                    <span class="glyphicon glyphicon-remove glyphicon-cancelar"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@Scripts.Render("~/bundles/jsValidacion")
+<script type="text/javascript">
+    var form = $("#Frm_Estado_Aprobacion");
+    function Actualizar(varCodEsta) {
+        if (form.validate() && form.valid()) {
+            var prm = {
+                FS_COD_ESTA: varCodEsta,
+                FS_DES_ESTA: $('#TXT_FS_DES_ESTA').val(),
+                FS_IND_ESTA: $('[id=obj_FS_IND_ESTA]:checked').val()
+            };
+            $.ajax({
+                type: "post", url: "@Url.Action("Actualizar", "EstadoAprobacion")", data: prm,
+                success: function (res) {
+                    alertify.success("<strong>Actualizado correctamente.</strong>");
+                    Cancelar();
+                    $("#btnCerrarEstadoEdit").click();
+                    $(".modal-backdrop").removeClass();
+                },
+                error: function (res) {
+                    alertify.error("<strong>No se puede actualizar .</strong>");
+                }
+            });
+        };
+    };
+</script>

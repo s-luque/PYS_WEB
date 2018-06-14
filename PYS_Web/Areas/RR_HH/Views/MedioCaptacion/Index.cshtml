@@ -1,0 +1,187 @@
+﻿@using PYS_Entidad;
+@{
+    List<E_TA_MEDI_CAPT> list = (List<E_TA_MEDI_CAPT>)ViewBag.List_Medio;
+    Layout = null;
+}
+<!-- Vista Medio Captación - Index -->
+<script>
+    function Nuevo() {
+        $.ajax({
+            type: "post", url: "@Url.Action("NewMedio", "MedioCaptacion")",
+            success: function (res) {
+                $("#ViewModal").empty();
+                $("#ViewModal").html(res);
+                $("#btnViewModal").click();
+            },
+            error: function (res) {
+                alertify.error("<strong>Error de conexión.</strong>");
+            }
+        });
+    };
+    function Editar(varCodMediCapt) {
+        var prm = {
+            FS_COD_MEDI_CAPT: varCodMediCapt
+        };
+        $.ajax({
+            type: "post", data: prm, url: "@Url.Action("EditMedio", "MedioCaptacion")",
+            success: function (res) {
+                $("#ViewModal").empty();
+                $("#ViewModal").html(res);
+                $("#btnViewModal").click();
+            },
+            error: function (res) {
+                alertify.error("<strong>Error de conexión.</strong>");
+            }
+        });
+    };
+
+    function Eliminar(medio) {
+        alertify.confirm('¿Está seguro de eliminar el registro?', function (e) {
+            if (e) {
+                var prm = {
+                    FS_COD_MEDI_CAPT: medio
+                };
+                $.ajax({
+                    type: "post", url: "@Url.Action("DeleteMedio", "MedioCaptacion")",
+                    data: prm,
+                    success: function (res) {
+                        alertify.success("<strong>Eliminado correctamente.</strong>");
+                        $("#btnMedioCaptacion").click();
+                        $(".modal-backdrop").removeClass();
+                    },
+                    error: function (res) {
+                        alertify.error("<strong>No se puede eliminar.</strong>");
+                    }
+                });
+            } else {
+                return false;
+            };
+        });
+    };
+
+    function Cancelar() {
+        $("#btnMedioCaptacion").click();
+    };
+
+    function Imprimir() {
+
+    };
+
+</script>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3>Medio Captación</h3>
+    </div>
+    <div class="panel-body">
+        <div class="content-body">
+         
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <div class="table table-responsive">
+                        <div class="clearfix form-group btn-yellow pull-left btn-nuevo-group">
+                            <div class="btn-group">
+                                <button id="btnNuevo" class="btn btn-default pull-left" onclick="Nuevo();">
+                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Nuevo
+                                </button>
+                            </div>
+                        </div>
+                        <table id="tblMedio" class="table table-striped table-bordered table-hover table-condensed" cellspacing="0" width="100%">
+                            <thead class="bg-primary">
+                                <tr>
+                                    <th style="width:8%">Acciones</th>
+                                    <th style="width:7%">Código</th>
+                                    <th style="width:85%">Descripción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    if (list.Count >= 0 && list != null)
+                                    {
+                                        foreach (E_TA_MEDI_CAPT item in list)
+                                        {
+                                            <tr>
+                                                <td class="controls text-center text-middle" style="padding:2px !important">
+                                                    <span class="control-table">
+                                                        <i data-toggle="tooltip" title="" data-original-title="Cancelar" id="btnCancelar" class="glyphicon glyphicon-remove" style="display: none" onclick="Cancelar();" />
+                                                    </span>
+                                                    <span class="control-table">
+                                                        <i data-toggle="tooltip" title="" data-original-title="Editar" id="Idpencil" 
+                                                           class="glyphicon glyphicon-pencil btn btn-transparent btn-editar"
+                                                           onclick="Editar('@item.FS_COD_MEDI_CAPT');"></i>
+                                                    </span>
+                                                    <span class="control-table">
+                                                        <i data-toggle="tooltip" title="" data-original-title="Eliminar" 
+                                                           class="glyphicon glyphicon-floppy-remove btn btn-transparent btn-eliminar" 
+                                                           onclick="Eliminar('@item.FS_COD_MEDI_CAPT');"></i>
+                                                    </span>
+                                                </td>
+                                                <td class="col-cod-medi-capt">@item.FS_COD_MEDI_CAPT</td>
+                                                <td class="text-left">@item.FS_DES_MEDI_CAPT</td>
+
+                                            </tr>
+                                        }
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bs-example-modal-lg" id="ViewModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+</div>
+<div class="col-sm-2 a-left no-padd">
+    <button data-toggle="modal" data-target="#ViewModal" id="btnViewModal" onclick="" hidden="hidden">Mostrar</button>
+</div>
+
+<script>
+    $(function () {
+        $("tr th").addClass("text-center");
+        $('#tblMedio').DataTable({
+            responsive: true,
+            stateSave: true,
+            "stateDuration": 25,
+            dom: 'lBfrtip',
+            buttons: [
+                {
+                    extend: 'collection',
+                    text: 'Exportar',
+                    buttons: [
+                        'copy',
+                        'excel',
+                        'csv',
+                        'pdf',
+                        'print'
+                    ]
+                }
+            ],
+            "lengthMenu": [[5, 10, -1], [5, 10, "Todos"]],
+            "language": {
+                "sProcessing": "Procesando...",
+                "sLengthMenu": "Mostrar _MENU_ registros",
+                "sZeroRecords": "No se encontraron resultados",
+                "sEmptyTable": "Ningún dato disponible en esta tabla",
+                "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix": "",
+                "sSearch": "Buscar:",
+                "sUrl": "",
+                "sInfoThousands": ",",
+                "sLoadingRecords": "Cargando...",
+                "oPaginate": {
+                    "sFirst": "Primero",
+                    "sLast": "Último",
+                    "sNext": "Siguiente",
+                    "sPrevious": "Anterior"
+                }
+            }
+        });
+    });
+</script>

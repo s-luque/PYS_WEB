@@ -1,0 +1,136 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Procesos & Sistemas | Principal</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link href="@Url.Content("~/")Content/AdminLTE/img/LOGO_PYS.png" rel="shortcut icon" type="image/png" />
+
+    @Styles.Render("~/Content/css")
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <style>
+        .navbar-default .navbar-toggle .icon-bar {
+            background-color: white;
+        }
+
+        .navbar-default .navbar-toggle:hover,
+        .navbar-default .navbar-toggle:focus {
+            background-color: rgba(44, 44, 44, 0.1);
+        }
+        .upPage {
+    cursor: pointer;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display:none;
+}
+    </style>
+</head>
+
+<body class="hold-transition skin-yellow-light sidebar-mini">
+    <div class="wrapper">
+        <header class="main-header" style="transition: all 0.3s;">
+            <!-- Logo -->
+            <a href="@Url.Action("Index", "Home", new { Area = "" },null)" class="logo">
+                <!-- mini logo para sidebar mini 30x30 pixels -->
+                <span class="logo-mini">
+                    <img src="~/Content/AdminLTE/img/LOGO_PYS.png" class="img-circle" width="30px" height="30px" alt="User Image">
+                </span>
+                <!-- logo para estado regular y móbiles -->
+                <span class="logo-lg">
+                    Procesos & Sistemas
+                </span>
+            </a>
+            <!-- Header Navbar: style can be found in header.less -->
+            <nav class="navbar navbar-default">
+                <a class="sidebar-toggle" data-toggle="push-menu" role="button">
+                    <span class="sr-only">Cambiar navegación</span>
+                </a>
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#toggleNav" aria-expanded="false">
+                            <i class="glyphicon glyphicon-align-justify"></i>
+                        </button>
+                    </div>
+
+                    <div class="collapse navbar-collapse" id="toggleNav">
+                        <ul class="nav navbar-nav navbar-left">
+                            <li><a href="@Url.Action("Index", "Home", new { Area = "Logistica" }, null)" id="btnLogisticaNav" data-navAjax="true"><i class="glyphicon glyphicon-stats" style="margin-right:3px;"></i>Logística</a></li>
+                            <li><a href="@Url.Action("Index", "Home", new { Area = "Ventas" }, null)" id="btnVentasNav" data-navAjax="true"><i class="glyphicon glyphicon-briefcase" style="margin-right:3px;"></i>Ventas</a></li>
+                            <li><a href="@Url.Action("Index", "Home", new { Area = "Finanzas"}, null)" id="btnFinanzasdNav" data-navAjax="true"><i class="glyphicon glyphicon-stats" style="margin-right:3px;"></i>Contabilidad</a></li>
+                            <li><a href="@Url.Action("Index", "Home", new { Area = "Tesoreria" }, null)" id="btnTesoreriadNav" data-navAjax="true"><i class="glyphicon glyphicon-list-alt" style="margin-right:3px;"></i>Tesorería</a></li>
+                            <li><a href="@Url.Action("Index", "Home", new { Area = "RR_HH" }, null)" id="btnRecursosNav" data-navAjax="true"><i class="glyphicon glyphicon-user" style="margin-right:3px;"></i>Recursos Humanos</a></li>
+                            <li><a href="@Url.Action("Index", "Home", new { Area = "Aprobaciones" }, null)" id="btnAprobacionesNav" data-navAjax="true"><i class="glyphicon glyphicon-list-alt" style="margin-right:3px;"></i>Aprobaciones</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                    <i class="glyphicon glyphicon-user" style="margin-right:5px;"></i><span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="">Perfil</a></li>
+                                    <li><a href="@Url.Action("Login", "Home")">Cerrar Sesión</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </nav>
+        </header>
+
+        @Html.Partial("SideMenu")
+
+        <div class="content-wrapper">
+            <section class="content-header" data-navajaxcontent="true">
+                <!-- Contenido /-->
+            </section>
+        </div>
+   
+    <a  href="#" class="btn btn-primary btn upPage" role="button" ><span class="glyphicon glyphicon-chevron-up"></span></a>
+        <!-- Footer -->
+        <footer class="main-footer">
+            <div class="pull-right hidden-xs">
+                <b>Version</b> 2.4.0
+            </div>
+            <strong>Copyright &copy;</strong> All rights
+            reserved.
+        </footer>
+        <!--/Footer -->
+    </div>
+    <!-- ./wrapper -->
+
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/js")
+    @Scripts.Render("~/bundles/jsTables")
+    <script>
+        // Activar tooltips
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $(document).ajaxStart(function () { Pace.restart(); });
+        // Menú por Área
+        $('#btnAprobacionesNav').on('click', function () {
+            $('#sidebar').find('.ocultar').hide();
+            $('#menuAprobacion').show(200);
+        });
+        $('#btnRecursosNav').on('click', function () {
+            $('#sidebar').find('.ocultar').hide();
+            $('#menuRecursos').show(200);
+        });
+        $('#btnLogisticaNav').on('click', function () {
+            $('#sidebar').find('.ocultar').hide();
+            $('#menuLogistica').show(200);
+        });
+
+        $.widget.bridge('uibutton', $.ui.button);
+
+    </script>
+
+</body>
+</html>
